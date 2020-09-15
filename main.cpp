@@ -1,6 +1,16 @@
+#ifndef UNICODE
+#define UNICODE
+#endif
+#ifndef _UNICODE
+#define _UNICODE
+#endif
+
 #include <iostream>
 #include <Windows.h>
 //#include <conio.h> //console input output FACEPALM
+
+const int screenWidth = 80;
+const int screenHeight = 30;
 
 const int WIDTH = 20;
 const int HEIGHT = 20;
@@ -9,6 +19,8 @@ bool bGameOver;
 int x, y, nFruitX, nFruitY, nScore;
 int nTailX[100], nTailY[100];	//
 int nTail;			//Specifies the length of the tail
+
+unsigned char *pField = nullptr;
 
 enum eDirection { STOP = 0, LEFT, RIGHT, UP, DOWN};
 eDirection dir;
@@ -34,8 +46,16 @@ void Setup()
 
 void Draw()
 {
+	//Let's draw without calling the system
+	 wchar_t *screen = new wchar_t[screenWidth * screenHeight];
 	//system("clear"); //For linux
-	system("cls");	//windows
+	//system("cls");	//windows
+	 pField = new unsigned char[WIDTH * HEIGHT];
+
+
+	//Print the top wall
+	 for (int i = 0; i < screenWidth * screenHeight; i++)
+		 screen[i] = L'X';
 
 	//Print the top wall
 	for (int i = 0; i < WIDTH + 2; i++)
@@ -80,7 +100,6 @@ void Draw()
 	for (int i = 0; i < WIDTH + 2; i++)
 		std::cout << "#";
 	std::cout << std::endl << std::endl << "Score: " << nScore << std::endl;
-
 }
 
 void Input() //Controller
