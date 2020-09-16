@@ -7,18 +7,22 @@
 
 #include <iostream>
 #include <Windows.h>
-//#include <conio.h> //console input output FACEPALM
 
-const int screenWidth = 80;
-const int screenHeight = 30;
+const int SCREENWIDTH = 80;
+const int SCREENHEIGHT = 30;
+const int SCREENAREA = SCREENWIDTH * SCREENHEIGHT;
 
 const int WIDTH = 20;
 const int HEIGHT = 20;
-const bool BOUNDARIES = true; //Player can't leave the game arena
+const int AREA = WIDTH * HEIGHT;
+
+const bool BOUNDARIES = false; //Player can't leave the game arena
 bool bGameOver;
 int x, y, nFruitX, nFruitY, nScore;
 int nTailX[100], nTailY[100];	//
 int nTail;			//Specifies the length of the tail
+
+wchar_t *screen = new wchar_t[AREA];
 
 unsigned char *pField = nullptr;
 
@@ -44,62 +48,61 @@ void Setup()
 	nScore = 0;
 }
 
-void Draw()
+void Draw(HANDLE hConsole)
 {
 	//Let's draw without calling the system
-	 wchar_t *screen = new wchar_t[screenWidth * screenHeight];
-	//system("clear"); //For linux
-	//system("cls");	//windows
-	 pField = new unsigned char[WIDTH * HEIGHT];
-
-
-	//Print the top wall
-	 for (int i = 0; i < screenWidth * screenHeight; i++)
-		 screen[i] = L'X';
+	DWORD dwBytesWritten = 0;
+	
+	//Print to the buffer
+	 for (int i = 0; i < SCREENAREA; i++)
+		screen[i] = L'#';
 
 	//Print the top wall
 	for (int i = 0; i < WIDTH + 2; i++)
-		std::cout << "#";
+		screen[i] = L'#';
 
 	for (int i = 0; i < HEIGHT; i++)
 	{
-		std::cout << std::endl;
 		for (int j = 0; j < WIDTH; j++)
 		{
+			int nPos = (i + 2) * SCREENWIDTH + (j + 2);
+
 			if (j == 0)
-				std::cout << "#"; //Print left wall
+				screen[nPos] = L'#'; //Print left wall
+
+			//Snake
 			if (i == y && j == x)
-				std::cout << "O"; //Print the snake head (player)
+				screen[nPos] = L'O'; //Print the snake head (player)
 			else if (i == nFruitY && j == nFruitX)
-				std::cout << "F";	//Print the fruit
+				screen[nPos] = L'F';//+1F347	//Print the fruit
 			else
 			{
 				bool print = false; //Keeps track of whether we printed the tail segment
 				//Loop through every element of the tail and draw it
 				for (int k = 0; k < nTail; k++)
 				{
-					//std::cout << "Tail size " << nTail << std::endl;
 					//If tailX is our current x coord and tailY is our current y coord
 					if (nTailX[k] == j && nTailY[k] == i)
 					{
 						print = true;
-						std::cout << "o";
+						screen[nPos] = L'o';
 					}
 				}
 				if (!print)
-					std::cout << " ";
+					screen[nPos] = L' ';
 			}
 
 			if (j == WIDTH - 1)
-				std::cout << "#"; //Print right wall
+				screen[nPos] = L'#';
 		}
 	}
 
-	std::cout << std::endl;
 	//Print bottom wall
 	for (int i = 0; i < WIDTH + 2; i++)
-		std::cout << "#";
-	std::cout << std::endl << std::endl << "Score: " << nScore << std::endl;
+		screen[((HEIGHT - 1) + 2) * SCREENWIDTH + i] = L'#';
+ 
+	//Display Frame
+	WriteConsoleOutputCharacter(hConsole, screen, SCREENAREA, {0, 0}, &dwBytesWritten);
 }
 
 void Input() //Controller
@@ -190,14 +193,16 @@ void Logic() //Player
 
 int main()
 {
+	HANDLE hConsole = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE, 0, NULL, CONSOLE_TEXTMODE_BUFFER, NULL);
+	SetConsoleActiveScreenBuffer(hConsole);
+	
 	Setup();
-
 	while (!bGameOver)
 	{
-		Draw();
+		Draw(hConsole);
 		Input();
 		Logic();
-		//Sleep(10);	//Sleep for 10 milliseconds
+		Sleep(100);	//Sleep for 100 milliseconds
 	}	
 	return 0;
 }
