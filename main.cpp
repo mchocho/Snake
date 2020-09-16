@@ -16,7 +16,7 @@ const int WIDTH = 20;
 const int HEIGHT = 20;
 const int AREA = WIDTH * HEIGHT;
 
-const bool BOUNDARIES = false; //Player can't leave the game arena
+const bool BOUNDARIES = true; //Player can't leave the game arena
 bool bGameOver;
 int x, y, nFruitX, nFruitY, nScore;
 int nTailX[100], nTailY[100];	//
@@ -121,6 +121,7 @@ void Input() //Controller
 	//a - left
 	//d - right
 	//s - down
+	//escape - quit
 
 	if (GetKeyState('A') & 0x8000)
 		dir = LEFT;
@@ -214,7 +215,7 @@ int main()
 		Draw(hConsole);
 		Input();
 		Logic();
-		Sleep(100);	//Sleep for 100 milliseconds
+		Sleep(80);	//Sleep for 80 milliseconds
 	}	
 	return 0;
 }
