@@ -33,6 +33,16 @@ void resetFruit() {
 	//Place fruit at random position
 	nFruitX = rand() % WIDTH;
 	nFruitY = rand() % HEIGHT;
+
+	if (nFruitX == 0)
+		++nFruitX;
+	else if (nFruitX == WIDTH - 1)
+		--nFruitX;
+
+	if (nFruitY == 0)
+		++nFruitX;
+	else if (nFruitY == HEIGHT - 1)
+		--nFruitY;
 }
 
 void Setup()
@@ -120,6 +130,8 @@ void Input() //Controller
 		dir = UP;
 	else if (GetKeyState('S') & 0x8000)
 		dir = DOWN;
+	else if (GetKeyState(0x1B) & 0x8000)
+		bGameOver = true;	
 }
 
 void Logic() //Player
@@ -167,12 +179,12 @@ void Logic() //Player
 	}
 	else {
 		//This allows us to jump through walls
-		if (x >= WIDTH)
+		if (x >= WIDTH - 1)
 			x = 0;
 		else if (x < 0)
 			x = WIDTH - 1;
 	
-		if (y >= HEIGHT)
+		if (y >= HEIGHT - 1)
 			y = 0;
 		else if (y < 0)
 			y = HEIGHT - 1;
