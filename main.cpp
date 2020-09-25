@@ -16,7 +16,7 @@ const int WIDTH = 20;
 const int HEIGHT = 20;
 const int AREA = WIDTH * HEIGHT;
 
-const bool BOUNDARIES = true; //Player can't leave the game arena
+const bool BOUNDARIES = false; //Player can't leave the game arena
 bool bGameOver;
 int x, y, nFruitX, nFruitY, nScore;
 int nTailX[100], nTailY[100];	//
@@ -82,9 +82,9 @@ void Draw(HANDLE hConsole)
 
 			//Snake
 			if (i == y && j == x)
-				screen[nPos] = L'O'; //Print the snake head (player)
+				screen[nPos] = 0x25EF; //Print the snake head (player)
 			else if (i == nFruitY && j == nFruitX)
-				screen[nPos] = L'F';//+1F347	//Print the fruit
+				screen[nPos] = 0x2CDC;	//Print the fruit
 			else
 			{
 				bool print = false; //Keeps track of whether we printed the tail segment

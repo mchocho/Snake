@@ -5,4 +5,5 @@
 *.ghc
 *.stackdump
 .DS_Store
+screenshots
 snake
